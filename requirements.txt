@@ -5,3 +5,6 @@ argparse
 json
 typing
 warnings
+astrapy==1.4.0
+pandas
+datasets
