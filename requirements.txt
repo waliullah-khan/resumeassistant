@@ -2,8 +2,6 @@ python-dotenv
 streamlit
 requests
 argparse
-typing
-warnings
-astrapy==1.4.0
+astrapy
 pandas
 datasets
