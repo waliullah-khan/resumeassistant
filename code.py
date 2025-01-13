@@ -1,7 +1,7 @@
 import streamlit as st
 # Set page config must be the first Streamlit command
 st.set_page_config(
-    page_title="ResumAI - Your Job Application Assistant",
+    page_title="EzJob - Your Job Application Assistant",
     page_icon="📝",
     layout="wide"
 )
@@ -34,7 +34,7 @@ st.markdown("""
         font-weight: bold;
     }
     .stButton>button:hover {
-        background-color: #940c57;
+        background-color: #FF2B2B;
     }
     .upload-text {
         font-size: 1.2rem;
@@ -101,8 +101,8 @@ def main():
     col1, col2, col3 = st.columns([1,2,1])
     with col2:
         st.image(os.path.join(os.path.dirname(__file__), 'resume.jpeg'), use_container_width=True)
-        st.markdown("<h1 style='text-align: center; color:#940c57;'>Making Job Applications Easier!</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; font-size: 1.2em;'>Your Personal AI-Powered Job Application Assistant</p>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center; color: #bf0d6f;'>EzJob</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center; font-size: 1.2em;'>Your AI-Powered Job Application Assistant</p>", unsafe_allow_html=True)
 
     # Features Section
     st.markdown("---")
@@ -172,7 +172,7 @@ def main():
 
     # Footer
     st.markdown("---")
-    st.markdown("<p style='text-align: center; color: #666;'>Powered by Yours Truly🙃🙃</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #666;'>Powered by Yours Truly</p>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
