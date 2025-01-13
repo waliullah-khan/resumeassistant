@@ -54,6 +54,18 @@ st.markdown("""
         margin: 1rem 0;
         border: 1px solid #E9ECEF;
     }
+    .full-width-image {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        max-height: 300px; 
+        object-fit: cover;
+    }
+    .stImage {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -100,7 +112,10 @@ def main():
     # Header Section
     col1, col2, col3 = st.columns([1,2,1])
     with col2:
-        st.image(os.path.join(os.path.dirname(__file__), 'resume.jpeg'), use_container_width=True)
+        st.image(os.path.join(os.path.dirname(__file__), 'resume.jpeg'), 
+                 use_container_width=True,
+                output_format='JPEG',
+                class_name='full_width_image')
         st.markdown("<h1 style='text-align: center; color: #bf0d6f;'>EzJob</h1>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; font-size: 1.2em;'>Your AI-Powered Job Application Assistant</p>", unsafe_allow_html=True)
 
