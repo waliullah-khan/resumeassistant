@@ -1,0 +1,7 @@
+python-dotenv
+streamlit
+requests
+argparse
+json
+typing
+warnings

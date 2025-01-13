@@ -1,0 +1,6 @@
+astrapy==1.4.0
+pandas
+datasets
+
+##Authenticating with AstraDB
+##AstraCS:lUuSvvHhZJdPmshgtWcCepUx:9bf8896b68516b04aabf72fda128df4baaf86fe0602cc115f58eaaf182b093c2
