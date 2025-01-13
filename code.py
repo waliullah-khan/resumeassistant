@@ -1,7 +1,7 @@
 import streamlit as st
 # Set page config must be the first Streamlit command
 st.set_page_config(
-    page_title="EzJob - Your Job Application Assistant",
+    page_title="VEzJob - Your Job Application Assistant",
     page_icon="📝",
     layout="wide"
 )
