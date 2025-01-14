@@ -54,17 +54,15 @@ st.markdown("""
         margin: 1rem 0;
         border: 1px solid #E9ECEF;
     }
-    .full-width-image {
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        max-height: 300px; 
-        object-fit: cover;
+    .stImage > img {
+        width: 100% !important;
+        max-height: 300px !important;
+        object-fit: cover !important;
     }
-    .stImage {
-        width: 100%;
+    div.stImage {
         margin: 0;
         padding: 0;
+        width: 100%;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -72,7 +70,21 @@ st.markdown("""
 def format_response(response_data):
     if 'outputs' in response_data and len(response_data['outputs']) > 0:
         message = response_data['outputs'][0]['outputs'][0]['results']['message']
-        return message.get('text', 'No analysis available')
+        text = message.get('text', 'No analysis available')
+        
+        # Convert markdown headers to plain text with proper spacing
+        lines = text.split('\n')
+        formatted_lines = []
+        for line in lines:
+            # Remove markdown headers
+            line = line.replace('#', '').strip()
+            # Add proper spacing for sections
+            if line and not line.startswith('-') and not line.startswith('*'):
+                formatted_lines.append('\n' + line.upper() + '\n')
+            else:
+                formatted_lines.append(line)
+        
+        return '\n'.join(formatted_lines)
     return 'Invalid response format'
 
 def run_flow(message, file_content):
@@ -94,30 +106,25 @@ def run_flow(message, file_content):
     }
     
     try:
-        response = requests.post(api_url, json=payload, headers=headers)
+        response = requests.post(api_url, json=payload, headers=headers, timeout=300)
         response.raise_for_status()
-        
-        if response.status_code == 200:
-            try:
-                return response.json()
-            except json.JSONDecodeError:
-                raise ValueError("Invalid JSON response from API")
-        else:
-            raise requests.RequestException(f"API request failed with status code: {response.status_code}")
-            
+        return response.json()
+    except requests.exceptions.Timeout:
+        raise TimeoutError("Request timed out - flow processing took too long")
     except requests.exceptions.RequestException as e:
         raise ConnectionError(f"Failed to connect to API: {str(e)}")
 
 def main():
-    # Header Section
-    col1, col2, col3 = st.columns([1,2,1])
-    with col2:
-        st.image(os.path.join(os.path.dirname(__file__), 'resume.jpeg'), 
-                 use_container_width=True,
-                output_format='JPEG',
-                class_name='full_width_image')
-        st.markdown("<h1 style='text-align: center; color: #bf0d6f;'>EzJob</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; font-size: 1.2em;'>Your AI-Powered Job Application Assistant</p>", unsafe_allow_html=True)
+    # Header Section - Full width image
+    st.image(
+        os.path.join(os.path.dirname(__file__), 'resume.jpeg'),
+        use_container_width=True,
+        output_format='JPEG'
+    )
+    
+    # Title and subtitle
+    st.markdown("<h1 style='text-align: center; color: #bf0d6f;'>EzJob</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-size: 1.2em;'>Your AI-Powered Job Application Assistant</p>", unsafe_allow_html=True)
 
     # Features Section
     st.markdown("---")
@@ -173,11 +180,7 @@ def main():
                     formatted_response = format_response(response)
                     if formatted_response != 'Invalid response format':
                         st.success("✅ Analysis Complete!")
-                        st.markdown(f"""
-                        <div class='success-message'>
-                            {formatted_response}
-                        </div>
-                        """, unsafe_allow_html=True)
+                        st.text(formatted_response)  # Changed to st.text for plain text display
                     else:
                         st.error("❌ Unable to analyze resume. Please try again.")
                 except Exception as e:
