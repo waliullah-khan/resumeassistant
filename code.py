@@ -54,16 +54,6 @@ st.markdown("""
         margin: 1rem 0;
         border: 1px solid #E9ECEF;
     }
-    .stImage > img {
-        width: 100% !important;
-        max-height: 300px !important;
-        object-fit: cover !important;
-    }
-    div.stImage {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -92,24 +82,27 @@ def run_flow(message, file_content):
     }
     
     try:
-        response = requests.post(api_url, json=payload, headers=headers, timeout=300)
+        response = requests.post(api_url, json=payload, headers=headers)
         response.raise_for_status()
-        return response.json()
-    except requests.exceptions.Timeout:
-        raise TimeoutError("Request timed out - flow processing took too long")
+        
+        if response.status_code == 200:
+            try:
+                return response.json()
+            except json.JSONDecodeError:
+                raise ValueError("Invalid JSON response from API")
+        else:
+            raise requests.RequestException(f"API request failed with status code: {response.status_code}")
+            
     except requests.exceptions.RequestException as e:
         raise ConnectionError(f"Failed to connect to API: {str(e)}")
 
 def main():
-    # Header Section - Full width image
-    st.image(
-        os.path.join(os.path.dirname(__file__), 'resume.jpeg'),
-        use_container_width=True
-    )
-    
-    # Title and subtitle
-    st.markdown("<h1 style='text-align: center; color: #bf0d6f;'>EzJob</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; font-size: 1.2em;'>Your AI-Powered Job Application Assistant</p>", unsafe_allow_html=True)
+    # Header Section
+    col1, col2, col3 = st.columns([1,2,1])
+    with col2:
+        st.image(os.path.join(os.path.dirname(__file__), 'resume.jpeg'), use_container_width=True)
+        st.markdown("<h1 style='text-align: center; color: #bf0d6f;'>EzJob</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center; font-size: 1.2em;'>Your AI-Powered Job Application Assistant</p>", unsafe_allow_html=True)
 
     # Features Section
     st.markdown("---")
