@@ -1,7 +1,7 @@
 import streamlit as st
 # Set page config must be the first Streamlit command
 st.set_page_config(
-    page_title="EzJob - Your Job Application Assistant",
+    page_title="Application Assistant",
     page_icon="📝",
     layout="wide"
 )
@@ -16,7 +16,7 @@ import os
 BASE_API_URL = "https://api.langflow.astra.datastax.com"
 LANGFLOW_ID = "83499eea-2ef8-4364-b28b-5df4de22b2d6"
 ENDPOINT = "candidate"
-APPLICATION_TOKEN = "AstraCS:lUuSvvHhZJdPmshgtWcCepUx:9bf8896b68516b04aabf72fda128df4baaf86fe0602cc115f58eaaf182b093c2"
+APPLICATION_TOKEN = "AstraCS:UEGYkbUiOPIuiheaNOOicgpF:e5e6008eadb4aaa6883eb8126bef43c7c651bf90ded7d290b43f925462912eb5"
 
 # Custom CSS
 st.markdown("""
@@ -34,7 +34,7 @@ st.markdown("""
         font-weight: bold;
     }
     .stButton>button:hover {
-        background-color: #FF2B2B;
+        background-color: #940c57;
     }
     .upload-text {
         font-size: 1.2rem;
@@ -53,6 +53,16 @@ st.markdown("""
         background-color: #F8F9FA;
         margin: 1rem 0;
         border: 1px solid #E9ECEF;
+    }
+    .stImage > img {
+        width: 100% !important;
+        max-height: 300px !important;
+        object-fit: cover !important;
+    }
+    div.stImage {
+        margin: 0;
+        padding: 0;
+        width: 100%;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -101,8 +111,8 @@ def main():
     col1, col2, col3 = st.columns([1,2,1])
     with col2:
         st.image(os.path.join(os.path.dirname(__file__), 'resume.jpeg'), use_container_width=True)
-        st.markdown("<h1 style='text-align: center; color: #bf0d6f;'>EzJob</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; font-size: 1.2em;'>Your AI-Powered Job Application Assistant</p>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center; color:#940c57;'>Making Job Applications Easier!</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center; font-size: 1.2em;'>Your Personal AI-Powered Job Application Assistant</p>", unsafe_allow_html=True)
 
     # Features Section
     st.markdown("---")
@@ -172,7 +182,7 @@ def main():
 
     # Footer
     st.markdown("---")
-    st.markdown("<p style='text-align: center; color: #666;'>Powered by Yours Truly</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #666;'>Powered by Yours Truly🙃🙃</p>", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
