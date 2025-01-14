@@ -5,11 +5,13 @@ st.set_page_config(
     page_icon="📝",
     layout="wide"
 )
+
 import requests
 import json
 import base64
 from datetime import datetime
 import os
+
 # Constants
 BASE_API_URL = "https://api.langflow.astra.datastax.com"
 LANGFLOW_ID = "83499eea-2ef8-4364-b28b-5df4de22b2d6"
@@ -32,7 +34,7 @@ st.markdown("""
         font-weight: bold;
     }
     .stButton>button:hover {
-        background-color: #940c57;
+        background-color: #FF2B2B;
     }
     .upload-text {
         font-size: 1.2rem;
@@ -54,11 +56,13 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
 def format_response(response_data):
     if 'outputs' in response_data and len(response_data['outputs']) > 0:
         message = response_data['outputs'][0]['outputs'][0]['results']['message']
         return message.get('text', 'No analysis available')
     return 'Invalid response format'
+
 def run_flow(message, file_content):
     api_url = f"{BASE_API_URL}/lf/{LANGFLOW_ID}/api/v1/run/{ENDPOINT}"
     
@@ -91,13 +95,15 @@ def run_flow(message, file_content):
             
     except requests.exceptions.RequestException as e:
         raise ConnectionError(f"Failed to connect to API: {str(e)}")
+
 def main():
     # Header Section
     col1, col2, col3 = st.columns([1,2,1])
     with col2:
         st.image(os.path.join(os.path.dirname(__file__), 'resume.jpeg'), use_container_width=True)
-        st.markdown("<h1 style='text-align: center; color:#940c57;'>Making Job Applications Easier!</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; font-size: 1.2em;'>Your Personal AI-Powered Job Application Assistant</p>", unsafe_allow_html=True)
+        st.markdown("<h1 style='text-align: center; color: #bf0d6f;'>EzJob</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center; font-size: 1.2em;'>Your AI-Powered Job Application Assistant</p>", unsafe_allow_html=True)
+
     # Features Section
     st.markdown("---")
     col1, col2, col3 = st.columns(3)
@@ -125,6 +131,7 @@ def main():
             <p>Receive personalized recommendations to improve your application</p>
         </div>
         """, unsafe_allow_html=True)
+
     # Application Form Section
     st.markdown("---")
     st.markdown("<h2 style='text-align: center;'>Start Your Job Search</h2>", unsafe_allow_html=True)
@@ -134,8 +141,10 @@ def main():
         job_field = st.text_input("🎯 Desired Job Field", placeholder="e.g., Data Science")
     with col2:
         location = st.text_input("📍 Desired Location", placeholder="e.g., New York")
+
     st.markdown("<p class='upload-text'>📄 Upload Your Resume</p>", unsafe_allow_html=True)
     uploaded_file = st.file_uploader("", type=["pdf", "docx"])
+
     if st.button("🚀 Analyze My Resume"):
         if job_field and uploaded_file:
             with st.spinner("🔄 Analyzing your resume..."):
@@ -160,8 +169,10 @@ def main():
                     st.error(f"❌ An error occurred: {str(e)}")
         else:
             st.warning("⚠️ Please fill in all fields and upload your resume.")
+
     # Footer
     st.markdown("---")
-    st.markdown("<p style='text-align: center; color: #666;'>Powered by Yours Truly🙃🙃</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #666;'>Powered by Yours Truly</p>", unsafe_allow_html=True)
+
 if __name__ == "__main__":
     main()
