@@ -1,7 +1,7 @@
 import streamlit as st
 # Set page config must be the first Streamlit command
 st.set_page_config(
-    page_title="VEzJob - Your Job Application Assistant",
+    page_title="EzJob - Your Job Application Assistant",
     page_icon="📝",
     layout="wide"
 )
@@ -56,7 +56,7 @@ st.markdown("""
     }
     .stImage > img {
         width: 100% !important;
-        max-height: 100px !important;
+        max-height: 300px !important;
         object-fit: cover !important;
     }
     div.stImage {
@@ -70,21 +70,7 @@ st.markdown("""
 def format_response(response_data):
     if 'outputs' in response_data and len(response_data['outputs']) > 0:
         message = response_data['outputs'][0]['outputs'][0]['results']['message']
-        text = message.get('text', 'No analysis available')
-        
-        # Convert markdown headers to plain text with proper spacing
-        lines = text.split('\n')
-        formatted_lines = []
-        for line in lines:
-            # Remove markdown headers
-            line = line.replace('#', '').strip()
-            # Add proper spacing for sections
-            if line and not line.startswith('-') and not line.startswith('*'):
-                formatted_lines.append('\n' + line.upper() + '\n')
-            else:
-                formatted_lines.append(line)
-        
-        return '\n'.join(formatted_lines)
+        return message.get('text', 'No analysis available')
     return 'Invalid response format'
 
 def run_flow(message, file_content):
@@ -118,8 +104,7 @@ def main():
     # Header Section - Full width image
     st.image(
         os.path.join(os.path.dirname(__file__), 'resume.jpeg'),
-        use_container_width=True,
-        output_format='JPEG'
+        use_container_width=True
     )
     
     # Title and subtitle
@@ -180,7 +165,11 @@ def main():
                     formatted_response = format_response(response)
                     if formatted_response != 'Invalid response format':
                         st.success("✅ Analysis Complete!")
-                        st.text(formatted_response)  # Changed to st.text for plain text display
+                        st.markdown(f"""
+                        <div class='success-message'>
+                            {formatted_response}
+                        </div>
+                        """, unsafe_allow_html=True)
                     else:
                         st.error("❌ Unable to analyze resume. Please try again.")
                 except Exception as e:
