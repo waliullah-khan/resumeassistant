@@ -46,6 +46,7 @@ st.markdown("""
         border-radius: 0.5rem;
         background-color: #E8F0FE;
         margin: 1rem 0;
+        white-space: pre-wrap;
     }
     .feature-box {
         padding: 1.5rem;
@@ -54,13 +55,29 @@ st.markdown("""
         margin: 1rem 0;
         border: 1px solid #E9ECEF;
     }
+    .stImage > img {
+        width: 100% !important;
+        max-height: 300px !important;
+        object-fit: cover !important;
+    }
+    div.stImage {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
     </style>
 """, unsafe_allow_html=True)
 
 def format_response(response_data):
     if 'outputs' in response_data and len(response_data['outputs']) > 0:
-        message = response_data['outputs'][0]['outputs'][0]['results']['message']
-        return message.get('text', 'No analysis available')
+        try:
+            message = response_data['outputs'][0]['outputs'][0]['results']['message']
+            text = message.get('text', 'No analysis available')
+            # Ensure proper line breaks are maintained
+            return text.replace('\n', '<br>')
+        except (KeyError, IndexError) as e:
+            st.error(f"Error processing response: {str(e)}")
+            return 'Error processing response'
     return 'Invalid response format'
 
 def run_flow(message, file_content):
@@ -82,7 +99,8 @@ def run_flow(message, file_content):
     }
     
     try:
-        response = requests.post(api_url, json=payload, headers=headers)
+        # Added timeout and increased it to handle longer processing times
+        response = requests.post(api_url, json=payload, headers=headers, timeout=600)
         response.raise_for_status()
         
         if response.status_code == 200:
@@ -93,16 +111,20 @@ def run_flow(message, file_content):
         else:
             raise requests.RequestException(f"API request failed with status code: {response.status_code}")
             
+    except requests.exceptions.Timeout:
+        raise TimeoutError("Request timed out - please try again later")
     except requests.exceptions.RequestException as e:
         raise ConnectionError(f"Failed to connect to API: {str(e)}")
 
 def main():
     # Header Section
-    col1, col2, col3 = st.columns([1,2,1])
-    with col2:
-        st.image(os.path.join(os.path.dirname(__file__), 'resume.jpeg'), use_container_width=True)
-        st.markdown("<h1 style='text-align: center; color: #bf0d6f;'>EzJob</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; font-size: 1.2em;'>Your AI-Powered Job Application Assistant</p>", unsafe_allow_html=True)
+    st.image(
+        os.path.join(os.path.dirname(__file__), 'resume.jpeg'),
+        use_container_width=True
+    )
+    
+    st.markdown("<h1 style='text-align: center; color: #bf0d6f;'>EzJob</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-size: 1.2em;'>Your AI-Powered Job Application Assistant</p>", unsafe_allow_html=True)
 
     # Features Section
     st.markdown("---")
@@ -147,9 +169,14 @@ def main():
 
     if st.button("🚀 Analyze My Resume"):
         if job_field and uploaded_file:
-            with st.spinner("🔄 Analyzing your resume..."):
+            with st.spinner("🔄 Analyzing your resume... This may take a few moments."):
                 try:
                     file_content = base64.b64encode(uploaded_file.read()).decode()
+                    
+                    # Clear any previous results
+                    if 'previous_results' in st.session_state:
+                        del st.session_state.previous_results
+                    
                     response = run_flow(
                         message=f"Job Application for {job_field} roles in {location}",
                         file_content=file_content
@@ -163,10 +190,17 @@ def main():
                             {formatted_response}
                         </div>
                         """, unsafe_allow_html=True)
+                        
+                        # Store results in session state
+                        st.session_state.previous_results = formatted_response
                     else:
                         st.error("❌ Unable to analyze resume. Please try again.")
+                except TimeoutError as e:
+                    st.error(f"❌ Analysis took too long: {str(e)}")
+                except ConnectionError as e:
+                    st.error(f"❌ Connection error: {str(e)}")
                 except Exception as e:
-                    st.error(f"❌ An error occurred: {str(e)}")
+                    st.error(f"❌ An unexpected error occurred: {str(e)}")
         else:
             st.warning("⚠️ Please fill in all fields and upload your resume.")
 
