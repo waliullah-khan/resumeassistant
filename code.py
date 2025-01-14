@@ -56,7 +56,7 @@ st.markdown("""
     }
     .stImage > img {
         width: 100% !important;
-        max-height: 300px !important;
+        max-height: 100px !important;
         object-fit: cover !important;
     }
     div.stImage {
